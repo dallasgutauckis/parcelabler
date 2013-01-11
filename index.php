@@ -146,6 +146,8 @@ $file = preg_replace( '/}+$/m', '', $file );
 $file = preg_replace( '/final /m', '', $file );
 // Remove scope modifiers
 $file = preg_replace( '/^(public|protected|private) /m', '', $file );
+// Remove annotations
+$file = preg_replace( '/^@[^ ]+/', '', $file );
 // Remove assignments
 $file = preg_replace( '/=.*$/m', '', $file );
 $file = str_replace( ';', '', $file );

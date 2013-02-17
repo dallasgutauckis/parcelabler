@@ -33,7 +33,7 @@ Copyright 2012 Dallas Gutauckis
   <title>parcelabler</title>
 </head>
 <body style="width: 100%">
-<a href="http://github.com/dallasgutauckis/parcelabler"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
+<a href="https://github.com/dallasgutauckis/parcelabler"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
   <div class="container">
   <div class="content">
     <h1>parcelabler</h1>
@@ -77,6 +77,9 @@ $supportedTypes = array(
   'Bundle' => 'Bundle',
 );
 
+$input = $file;
+
+// Remove single-line comments
 $file = preg_replace( '/\/\/.*/', '', $file );
 $file = str_replace( array( "\n", "\r", "\t", "  " ), '', $file );
 $class = null;
@@ -105,15 +108,12 @@ for ( $i = 0; $i < strlen( $file ); $i++ ) {
   if ( $record === false && $pc == '*' && $c == '/' ) {
     $record = true;
   }
-
 }
 
 $file = $newFile;
 $file = str_replace( '}', '};', $file );
 $file = preg_replace( '/^[^{]+{/', '', $file );
 $file = implode( ";\n", explode( ';', $file ) );
-//pprint( $file );
-
 
 $level = 0;
 $newFile = '';
@@ -139,6 +139,7 @@ for ( $i = 0; $i < strlen( $file ); $i++ ) {
 
 $file = $newFile;
 
+// Remove static variable references
 $file = preg_replace( '/^.* static .*$\n/m', '', $file );
 // Trim trailing slashes
 $file = preg_replace( '/}+$/m', '', $file );
@@ -186,8 +187,7 @@ echo '</ul>
 
 if ( isset( $_POST['submit'] ) && ! $class ) {
   echo '<div class="alert-message info"><strong>Try again...</strong> We really do need the full class definition (including the class name) to build this. I promise, we won\'t steal your code.</div>';
-} else if ( isset( $_POST['submit'] ) )
-{
+} else if ( isset( $_POST['submit'] ) ) {
   $fields = array();
   foreach ( $_POST['field'] as $field => $isEnabled ) {
     if ( $isEnabled && isset( $allFields[$field] ) )
@@ -198,9 +198,12 @@ if ( isset( $_POST['submit'] ) && ! $class ) {
   }
 
   if ( count( $fields ) > 0 ) {
-    $code = "
-    protected " . $class . "(Parcel in) {
-";
+    // Start with the original code
+    $code = trim( $input );
+    // Remove the last curly-brace to allow for the new code
+    $code = rtrim( $input, '}' );
+    
+    $code .= "\n    protected " . $class . "(Parcel in) {\n";
 
     $reads = array();
     $writes = array();
@@ -246,8 +249,9 @@ if ( isset( $_POST['submit'] ) && ! $class ) {
         public " . $class . "[] newArray(int size) {
             return new " . $class . "[size];
         }
-    };
-    ");
+    };");
+
+    $code .= "\n" . '}';
 
     echo '<h3>Output</h3><div class="alert-message success"><strong>Great news!</strong> Your code was parsed, you had fields for parceling, and the implementation for Parcelable is below.</div><p>Add the <a href="http://developer.android.com/reference/android/os/Parcelable.html">Parcelable</a> class to yours and add the following methods.</p><pre>' . $code . '</pre>';
   } else {

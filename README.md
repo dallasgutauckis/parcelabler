@@ -1,6 +1,6 @@
 # Android Parcelable Creator
 
-A tool for generating Android [Parcelable](http://developer.android.com/reference/android/os/Parcelable.html) implementations.
+A tool for generating Android [Parcelable](http://developer.android.com/reference/android/os/Parcelable.html) implementations. The original interface and live version can be used at http://devk.it/proj/parcelabler/.
 
 ## Changelog
 

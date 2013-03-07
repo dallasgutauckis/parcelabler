@@ -20,7 +20,7 @@ Copyright 2012 Dallas Gutauckis
  *
  * An Android parcelabler creator
  *
- * @snce 2012-02-22
+ * @since 2012-02-22
  * @author Dallas Gutauckis <dgutauckis@myyearbook.com>
  */
 
@@ -37,6 +37,7 @@ Copyright 2012 Dallas Gutauckis
   <div class="container">
   <div class="content">
     <h1>parcelabler</h1>
+    <em>by <a href="http://dallasgutauckis.com">Dallas Gutauckis</a></em>
     <h6>for Android Parcelable implementations</h6>
 <?php
 
@@ -71,7 +72,7 @@ $supportedTypes = array(
   'Byte' => 'Byte',
   'Double' => 'Double',
   'Float' => 'Float',
-  'Int' => 'Int',
+  'Integer' => 'Int',
   'Long' => 'Long',
   'String' => 'String',
   'Bundle' => 'Bundle',

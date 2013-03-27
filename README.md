@@ -4,6 +4,11 @@ A tool for generating Android [Parcelable](http://developer.android.com/referenc
 
 ## Changelog
 
+### 2.0
+ - Refactored system to be more object-oriented
+ - Added Date class support
+
+
 ### 1.1
 Added output of initial input, adding Parcelable implementation into provided code (top-level functionality only)
 

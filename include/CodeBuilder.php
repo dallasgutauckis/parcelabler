@@ -114,10 +114,7 @@ class CodeBuilder {
         list( $type, $field ) = explode( ' ', $line, 2 );
         $type = trim( $type );
         $fieldName = trim( $field );
-        
         $field = new CodeField( $fieldName, $type );
-
-        $isSupported = $this->isFieldSupported( $field );
 
         $this->mFields[$fieldName] = $field;
       }

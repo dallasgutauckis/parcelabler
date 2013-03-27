@@ -1,6 +1,4 @@
 <?php
-ini_set( 'error_reporting', 'on');
-ini_set('display_errors', E_ALL );
 /*
  * Copyright 2012 Dallas Gutauckis 
  * 

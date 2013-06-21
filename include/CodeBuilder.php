@@ -3,6 +3,7 @@
 class CodeBuilder {
   private $mInput;
   private $mFields = array();
+  private $mUnrecognizedFields = array();
   private $mSupportedTypes;
   private $mClass;
 
@@ -23,6 +24,17 @@ class CodeBuilder {
       'String' => new IntegratedTransformer( 'String' ),
       'Bundle' => new IntegratedTransformer( 'Bundle' ),
       'Date' => new DateTransformer(),
+      'List' => new ListTransformer( 'ArrayList' ),
+      'AbstractList' => new ListTransformer( 'LinkedList' ),
+      'AbstractSequentialList' => new ListTransformer( 'ArrayList' ),
+      'ArrayList' => new ListTransformer( 'ArrayList' ),
+      'AttributeList' => new ListTransformer( 'AttributeList' ),
+      'CopyOnWriteArrayList' => new ListTransformer( 'CopyOnWriteArrayList' ),
+      'LinkedList' => new ListTransformer( 'LinkedList' ),
+      'RoleList' => new ListTransformer( 'RoleList' ),
+      'RoleUnresolvedList' => new ListTransformer( 'RoleUnresolvedList' ),
+      'Stack' => new ListTransformer( 'Stack' ),
+      'Vector' => new ListTransformer( 'Vector' ),
     );
 
     $this->parse( $input );
@@ -111,12 +123,12 @@ class CodeBuilder {
       $lines = explode( "\n", $input );
 
       foreach ( $lines as $line ) {
-        list( $type, $field ) = explode( ' ', $line, 2 );
-        $type = trim( $type );
-        $fieldName = trim( $field );
-        $field = new CodeField( $fieldName, $type );
-
-        $this->mFields[$fieldName] = $field;
+        if (preg_match('/^\s*([\w\d_]+)(<[^>]+>)?\s+([\w\d_]+)\s*$/i', $line, $output_array)) {
+          $field = new CodeField( $output_array[3], $output_array[1], $output_array[2] );
+          $this->mFields[$field->getName()] = $field;
+        } else {
+          array_push($this->mUnrecognizedFields, $line);
+        }
       }
     }
   }
@@ -127,6 +139,10 @@ class CodeBuilder {
 
   public function getFields() {
     return array_values( $this->mFields );
+  }
+
+  public function getUnrecognizedFields() {
+    return array_values( $this->mUnrecognizedFields );
   }
 
   public function isFieldSupported( CodeField $field ) {
@@ -213,10 +229,12 @@ class CodeBuilder {
 class CodeField {
   private $mFieldName;
   private $mType;
+  private $mTypeParam;
 
-  public function __construct( $fieldName, $type ) {
+  public function __construct( $fieldName, $type, $typeParam ) {
     $this->mFieldName = $fieldName;
     $this->mType = $type;
+    $this->mTypeParam = $typeParam;
   }
 
   public function getName() {
@@ -225,5 +243,9 @@ class CodeField {
 
   public function getType() {
     return $this->mType;
+  }
+
+  public function getTypeParam() {
+    return $this->mTypeParam;
   }
 }

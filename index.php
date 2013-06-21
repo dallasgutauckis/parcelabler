@@ -94,8 +94,21 @@ if ( $file && $codeBuilder->getClass() ) {
   }
 }
 
-echo '</ul>
-<input type="hidden" name="fields" value="' . implode( ',', array_keys( $allFields ) ) . '" />
+echo '</ul>';
+
+$unrecognizedFields = $codeBuilder->getUnrecognizedFields();
+if ($file && $codeBuilder->getClass() && !empty($unrecognizedFields)) {
+  echo '<br/><div class="alert-message error">The following variables were not recognized (syntax error?):
+  <br/><br/><ol>';
+  
+  foreach ($unrecognizedFields as $variable) {
+    echo '<li class="error-item">' . $variable . '</li>';
+  }
+
+  echo '</ol></div>';
+}
+
+echo '<input type="hidden" name="fields" value="' . implode( ',', array_keys( $allFields ) ) . '" />
 </div>
 </div>
 </fieldset>

@@ -73,29 +73,84 @@ $postedFields = isset( $_POST['fields'] ) ? explode( ',', $_POST['fields'] ) : a
 
 $codeBuilder = new CodeBuilder( $file );
 
+$unsupportedFields = array();
 if ( $file && $codeBuilder->getClass() ) {
   $fields = $codeBuilder->getFields();
 
   foreach ( $fields as $field ) {
     $fieldName = $field->getName();
     $isChecked = '';
-    $isSupported = $codeBuilder->isFieldSupported( $field );
+    $supportLevel = $codeBuilder->getSupportLevel( $field );
 
-    if ( $isSupported ) {
+    if ( $supportLevel != SupportLevel::Unsupported ) {
       $isChecked = count( $postedFields ) == 0 || false === in_array( $fieldName, $postedFields ) || ( isset( $_POST['field'][$fieldName] ) && !!$_POST['field'][$fieldName] );
-    }
 
-    echo '<li>' . ( $isSupported ? '' : '<span class="label warning">Unsupported type: ' . $field->getType() . '</span>' )
+      echo '<li>'
        . '<label>'
-       . '<input type="checkbox" ' . ( $isChecked ? 'checked="checked"' : '' ) . 'name="field[' . $fieldName . ']" ' . ( $isSupported ? '' : 'disabled="disabled"' ) . ' />'
+       . '<input type="checkbox" ' . ( $isChecked ? 'checked="checked"' : '' ) . 'name="field[' . $fieldName . ']" />'
        . '<span>' . $fieldName . '</span></label></li>';
 
-    $_POST['field'][$fieldName] = $isChecked;
+      $_POST['field'][$fieldName] = $isChecked;
+    } else {
+      array_push( $unsupportedFields, $field );
+    }
   }
 }
 
-echo '</ul>
-<input type="hidden" name="fields" value="' . implode( ',', array_keys( $allFields ) ) . '" />
+echo '</ul>';
+
+$unrecognizedFields = $codeBuilder->getUnrecognizedFields();
+if ($file && $codeBuilder->getClass() && !empty($unrecognizedFields)) {
+  echo '<br/><div class="alert-message error">The following variables were not recognized (syntax error?):
+  <br/><br/><ol>';
+  
+  foreach ($unrecognizedFields as $variable) {
+    echo '<li class="error-item">' . $variable . '</li>';
+  }
+
+  echo '</ol></div>';
+}
+
+if ($file && $codeBuilder->getClass() && !empty($unsupportedFields)) {
+  echo '<br/><div class="alert-message error">The following variables cannot be written to Parcel:
+  <br/><br/><ol>';
+  
+  foreach ($unsupportedFields as $variable) {
+    echo '<li class="error-item">' . $variable->getType() . ' ' . $variable->getName() . ';</li>';
+  }
+
+  echo '</ol></div>';
+}
+
+if ($file && $codeBuilder->getClass()) {
+  $suspiciousTypes = array();
+  $fields = $codeBuilder->getFields();
+
+  foreach ( $fields as $field ) {
+    if ( $codeBuilder->getSupportLevel( $field ) != SupportLevel::Unsupported ){
+      if ( $codeBuilder->isTypeUnconditionallyParceable($field->getType()) === false ) {
+        array_push( $suspiciousTypes, $field->getType() );
+      } 
+      $typeParam = $field->getTypeParam();
+      if ( !empty($typeParam) && $codeBuilder->isTypeUnconditionallyParceable($typeParam) === false ) {
+        array_push( $suspiciousTypes, htmlentities($typeParam) );
+      }
+    }
+  }
+
+  if (!empty($suspiciousTypes)) {
+    echo '<br/><div class="alert-message warning">Check that the following classes implement either Parcelable or Serializable.<br/>'
+    . 'Otherwise you\'ll get a RuntimeException.<br/><br/><ol>';
+    
+    foreach ($suspiciousTypes as $type) {
+      echo '<li>' . $type . '</li>';
+    }
+
+    echo '</ol></div>';
+  }
+}
+
+echo '<input type="hidden" name="fields" value="' . implode( ',', array_keys( $codeBuilder->getFields() ) ) . '" />
 </div>
 </div>
 </fieldset>

@@ -17,6 +17,7 @@ Initial implementation of parcelabler; generates only Parcelable implementation
 
 ## Contributors
  - [Dallas Gutauckis](http://github.com/dallasgutauckis)
+ - [Alexey Grebenets](https://github.com/Alexey-)
 
 ## License
 

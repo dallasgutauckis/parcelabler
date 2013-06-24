@@ -4,11 +4,13 @@ class CodeBuilder {
   private $mInput;
   private $mFields = array();
   private $mUnrecognizedFields = array();
-  private $mSupportedTypes;
+  private $mParceableTypes;
+  private $mUnsupportedTypes;
   private $mClass;
 
   public function __construct( $input ) {
-    $this->mSupportedTypes = array(
+    // These are the Java types that can easily be written to Parcel
+    $this->mParceableTypes = array(
       'boolean' => new BooleanTransformer(),
       'Boolean' => new BooleanTransformer(),
       'byte' => new IntegratedTransformer( 'Byte' ),
@@ -35,6 +37,16 @@ class CodeBuilder {
       'RoleUnresolvedList' => new ListTransformer( 'RoleUnresolvedList' ),
       'Stack' => new ListTransformer( 'Stack' ),
       'Vector' => new ListTransformer( 'Vector' ),
+    );
+
+    // These are some of the most widespread types that cannot be written to Parcel 
+    $this->mUnsupportedTypes = array(
+      'File',
+      'Map',
+      'Runnable',
+      'Thread',
+      'Handler',
+      'AsyncTask' 
     );
 
     $this->parse( $input );
@@ -123,8 +135,8 @@ class CodeBuilder {
       $lines = explode( "\n", $input );
 
       foreach ( $lines as $line ) {
-        if (preg_match('/^\s*([\w\d_]+)(<[^>]+>)?\s+([\w\d_]+)\s*$/i', $line, $output_array)) {
-          $field = new CodeField( $output_array[3], $output_array[1], $output_array[2] );
+        if (preg_match('/^\s*([\w\d_]+)(<([^>]+)>)?\s+([\w\d_]+)\s*$/i', $line, $output_array)) {
+          $field = new CodeField( $output_array[4], $output_array[1], $output_array[3] );
           $this->mFields[$field->getName()] = $field;
         } else {
           array_push($this->mUnrecognizedFields, $line);
@@ -145,12 +157,22 @@ class CodeBuilder {
     return array_values( $this->mUnrecognizedFields );
   }
 
-  public function isFieldSupported( CodeField $field ) {
-    return $this->isSupported( $field->getType() );
+  public function getSupportLevel( CodeField $field ) {
+    if (isset( $this->mParceableTypes[ $field->getType() ] )) {
+      return SupportLevel::SpecificTransformer;
+    } else if (in_array( $field->getType(), $this->mUnsupportedTypes )) {
+      return SupportLevel::Unsupported;
+    } else {
+      return SupportLevel::GeneralTransformer;
+    }
   }
 
-  public function isSupported( $type ) {
-    return isset( $this->mSupportedTypes[ $type ] );
+  public function isTypeUnconditionallyParceable( $type ) {
+    if (isset( $this->mParceableTypes[ $type ] )) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private function padCodeLeft( $code ) {
@@ -182,10 +204,17 @@ class CodeBuilder {
     $writes = array();
 
     foreach ( $this->getFields() as $field ) {
-      if ( in_array( $field->getName(), $selectedFields ) && $this->isFieldSupported( $field ) ) {
-        $transformer = $this->mSupportedTypes[$field->getType()];
-        $reads[] = $this->padCodeLeft( $transformer->getReadCode( $field ) );
-        $writes[] = $this->padCodeLeft( $transformer->getWriteCode( $field ) );
+      if ( in_array( $field->getName(), $selectedFields )) {
+        $level = $this->getSupportLevel($field);
+        if ($level == SupportLevel::SpecificTransformer) {
+          $transformer = $this->mParceableTypes[$field->getType()];
+          $reads[] = $this->padCodeLeft( $transformer->getReadCode( $field ) );
+          $writes[] = $this->padCodeLeft( $transformer->getWriteCode( $field ) );
+        } else if ($level == SupportLevel::GeneralTransformer) {
+          $transformer = new ValueTransformer();
+          $reads[] = $this->padCodeLeft( $transformer->getReadCode( $field ) );
+          $writes[] = $this->padCodeLeft( $transformer->getWriteCode( $field ) );
+        }
       }
     }
 
@@ -248,4 +277,11 @@ class CodeField {
   public function getTypeParam() {
     return $this->mTypeParam;
   }
+}
+
+class SupportLevel
+{
+  const SpecificTransformer = 0;
+  const GeneralTransformer = 1;
+  const Unsupported = 2;
 }

@@ -16,22 +16,19 @@
  */
 
 /**
- * Implements a transformation of the given List subclass
+ * Implements a transformation of the field if the fields implements either Parceable or Serializable protocol
  */
-class ListTransformer implements Transformer {
-  private $mTypeSuffix;
+class ValueTransformer implements Transformer {
 
-  public function __construct( $typeSuffix ) {
-    $this->mTypeSuffix = $typeSuffix;
+  public function __construct() {
+    
   }
 
   public function getWriteCode( CodeField $field ) {
-    return 'dest.writeList(' . $field->getName() . ');';
+    return 'dest.writeValue(' . $field->getName() . ');';
   }
 
   public function getReadCode( CodeField $field ) {
-    $code  = $field->getName() . ' = new ' . $this->mTypeSuffix . '<' . $field->getTypeParam() . '>' . '();' . "\n";
-    $code .= 'in.readList(' . $field->getName() . ', null);';
-    return $code;
+    return $field->getName() . ' = (' . $field->getType() . ')in.readValue(null);';
   }
 }

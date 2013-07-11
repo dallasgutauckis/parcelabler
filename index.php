@@ -61,7 +61,7 @@ $postedFields = isset( $_POST['fields'] ) ? explode( ',', $_POST['fields'] ) : a
       <fieldset>
         <div class="row">
           <div class="span10">
-            <h3>Code</h2>
+            <h3>Code</h3>
             <textarea name="file" rows="20" class="span10"><?php echo htmlentities( $file ); ?></textarea>
             <span class="help-block">Paste your full class definition into the box above to get the Parcelable implementation and options for removing fields for parceling. Don't worry, we don't save your code. A small example is available at <a href="http://dallasgutauckis.com/2012/01/20/parcelabler-for-implementing-androids-parcelable-interface/">this blog post about parcelabler</a>.</span>
           </div>

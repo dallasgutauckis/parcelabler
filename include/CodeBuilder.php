@@ -243,6 +243,7 @@ class CodeBuilder {
     $code .= "
     }
 
+    @SuppressWarnings(\"unused\")
     public static final Parcelable.Creator<" . $this->mClass . "> CREATOR = new Parcelable.Creator<" . $this->mClass . ">() {
         public " . $this->mClass . " createFromParcel(Parcel in) {
             return new " . $this->mClass . "(in);

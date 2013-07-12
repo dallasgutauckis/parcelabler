@@ -229,10 +229,12 @@ class CodeBuilder {
     $code .= "
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
 
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
 ";
 
@@ -245,10 +247,12 @@ class CodeBuilder {
 
     @SuppressWarnings(\"unused\")
     public static final Parcelable.Creator<" . $this->mClass . "> CREATOR = new Parcelable.Creator<" . $this->mClass . ">() {
+        @Override
         public " . $this->mClass . " createFromParcel(Parcel in) {
             return new " . $this->mClass . "(in);
         }
 
+        @Override
         public " . $this->mClass . "[] newArray(int size) {
             return new " . $this->mClass . "[size];
         }

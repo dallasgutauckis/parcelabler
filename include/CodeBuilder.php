@@ -135,7 +135,7 @@ class CodeBuilder {
       $lines = explode( "\n", $input );
 
       foreach ( $lines as $line ) {
-        if (preg_match('/^\s*([\w\d_]+)(<([^>]+)>)?\s+([\w\d_]+)\s*$/i', $line, $output_array)) {
+        if (preg_match('/^\s*([\w\d_.]+)(<([^>]+)>)?\s+([\w\d_]+)\s*$/i', $line, $output_array)) {
           $field = new CodeField( $output_array[4], $output_array[1], $output_array[3] );
           $this->mFields[$field->getName()] = $field;
         } else {

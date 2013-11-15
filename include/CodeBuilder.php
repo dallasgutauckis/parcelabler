@@ -197,7 +197,11 @@ class CodeBuilder {
     $splitCode = explode( '{', $this->mInput, 2 );
 
     // Add Parcelable interface to class declaration
-    $code = trim( $splitCode[0] ) . " implements Parcelable {" . $splitCode[1];
+    if ( strpos( $splitCode[0], 'implements' ) == false ) {
+      $code = trim( $splitCode[0] ) . " implements Parcelable {" . $splitCode[1];
+    } else {
+      $code = trim( $splitCode[0] ) . ", Parcelable {" . $splitCode[1];
+    }
 
     // Remove the last curly-brace to allow for the new code
     $code = rtrim( $code, '}' );

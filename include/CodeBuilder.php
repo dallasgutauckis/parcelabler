@@ -193,10 +193,18 @@ class CodeBuilder {
    * @param selectedFields array
    */
   public function getOutput( $selectedFields = array() ) {
-    // Start with the original code
-    $code = trim( $this->mInput );
+    // Split the original code on the opening curly-brace for the class
+    $splitCode = explode( '{', $this->mInput, 2 );
+
+    // Add Parcelable interface to class declaration
+    if ( strpos( $splitCode[0], 'implements' ) == false ) {
+      $code = trim( $splitCode[0] ) . " implements Parcelable {" . $splitCode[1];
+    } else {
+      $code = trim( $splitCode[0] ) . ", Parcelable {" . $splitCode[1];
+    }
+
     // Remove the last curly-brace to allow for the new code
-    $code = rtrim( $this->mInput, '}' );
+    $code = rtrim( $code, '}' );
 
     $code .= "\n    protected " . $this->mClass . "(Parcel in) {\n";
 
@@ -225,10 +233,12 @@ class CodeBuilder {
     $code .= "
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
 
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
 ";
 
@@ -239,11 +249,14 @@ class CodeBuilder {
     $code .= "
     }
 
+    @SuppressWarnings(\"unused\")
     public static final Parcelable.Creator<" . $this->mClass . "> CREATOR = new Parcelable.Creator<" . $this->mClass . ">() {
+        @Override
         public " . $this->mClass . " createFromParcel(Parcel in) {
             return new " . $this->mClass . "(in);
         }
 
+        @Override
         public " . $this->mClass . "[] newArray(int size) {
             return new " . $this->mClass . "[size];
         }

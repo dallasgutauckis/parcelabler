@@ -12,17 +12,17 @@ class CodeBuilder {
     // These are the Java types that can easily be written to Parcel
     $this->mParceableTypes = array(
       'boolean' => new BooleanTransformer(),
-      'Boolean' => new BooleanTransformer(),
+      'Boolean' => new BooleanTransformerSafe(),
       'byte' => new IntegratedTransformer( 'Byte' ),
       'double' => new IntegratedTransformer( 'Double' ),
       'float' => new IntegratedTransformer( 'Float' ),
       'int' => new IntegratedTransformer( 'Int' ),
       'long' => new IntegratedTransformer( 'Long' ),
-      'Byte' => new IntegratedTransformer( 'Byte' ),
-      'Double' => new IntegratedTransformer( 'Double' ),
-      'Float' => new IntegratedTransformer( 'Float' ),
-      'Integer' => new IntegratedTransformer( 'Int' ),
-      'Long' => new IntegratedTransformer( 'Long' ),
+      'Byte' => new IntegratedTransformerSafe( 'Byte' ),
+      'Double' => new IntegratedTransformerSafe( 'Double' ),
+      'Float' => new IntegratedTransformerSafe( 'Float' ),
+      'Integer' => new IntegratedTransformerSafe( 'Int' ),
+      'Long' => new IntegratedTransformerSafe( 'Long' ),
       'String' => new IntegratedTransformer( 'String' ),
       'Bundle' => new IntegratedTransformer( 'Bundle' ),
       'Date' => new DateTransformer(),
@@ -37,6 +37,8 @@ class CodeBuilder {
       'RoleUnresolvedList' => new ListTransformer( 'RoleUnresolvedList' ),
       'Stack' => new ListTransformer( 'Stack' ),
       'Vector' => new ListTransformer( 'Vector' ),
+      'JSONObject' => new JSONTransformer( 'Object' ),
+      'JSONArray' => new JSONTransformer( 'Array' ),
     );
 
     // These are some of the most widespread types that cannot be written to Parcel 

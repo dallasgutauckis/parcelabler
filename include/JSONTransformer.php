@@ -16,9 +16,9 @@
  */
 
 /**
- * Implements a transformation of the given List subclass
+ * Implements a straightforward transformation of the given field 
  */
-class ListTransformer implements Transformer {
+class JSONTransformer implements Transformer {
   private $mTypeSuffix;
 
   public function __construct( $typeSuffix ) {
@@ -30,18 +30,12 @@ class ListTransformer implements Transformer {
 	$code .= '    dest.writeByte((byte) (0x00));' . "\n";
 	$code .= '} else {' . "\n";
 	$code .= '    dest.writeByte((byte) (0x01));' . "\n";
-	$code .= '    dest.writeList(' . $field->getName() . ');' . "\n";
+	$code .= '    dest.writeString(' . $field->getName() . '.toString());' . "\n";
 	$code .= '}';
     return $code;
   }
 
   public function getReadCode( CodeField $field ) {
-	$code  = 'if (in.readByte() == 0x01) {' . "\n";
-    $code .= '    ' . $field->getName() . ' = new ' . $this->mTypeSuffix . '<' . $field->getTypeParam() . '>' . '();' . "\n";
-    $code .= '    in.readList(' . $field->getName() . ', ' . $field->getTypeParam() . '.class.getClassLoader());' . "\n";
-	$code .= '} else {' . "\n";
-	$code .= '    ' . $field->getName() . ' = null;' . "\n";
-	$code .= '}';
-    return $code;
+    return $field->getName() . ' = in.readByte() == 0x00 ? null : new JSON' . $this->mTypeSuffix . '(in.readString());';
   }
 }

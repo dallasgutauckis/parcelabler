@@ -29,6 +29,6 @@ class ValueTransformer implements Transformer {
   }
 
   public function getReadCode( CodeField $field ) {
-    return $field->getName() . ' = (' . $field->getType() . ')in.readValue(null);';
+    return $field->getName() . ' = (' . $field->getType() . ')in.readValue(' . $field->getType() . '.class.getClassLoader());';
   }
 }

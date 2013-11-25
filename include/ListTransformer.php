@@ -31,7 +31,7 @@ class ListTransformer implements Transformer {
 
   public function getReadCode( CodeField $field ) {
     $code  = $field->getName() . ' = new ' . $this->mTypeSuffix . '<' . $field->getTypeParam() . '>' . '();' . "\n";
-    $code .= 'in.readList(' . $field->getName() . ', null);';
+    $code .= 'in.readList(' . $field->getName() . ', ' . $field->getTypeParam() . '.class.getClassLoader());';
     return $code;
   }
 }

@@ -16,7 +16,7 @@
  */
 
 /**
- * Implements a transformation of the field if the fields implements either Parceable or Serializable protocol
+ * Implements a transformation of the field if the fields implements either Parcelable or Serializable protocol
  */
 class ValueTransformer implements Transformer {
 

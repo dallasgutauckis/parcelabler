@@ -4,13 +4,13 @@ class CodeBuilder {
   private $mInput;
   private $mFields = array();
   private $mUnrecognizedFields = array();
-  private $mParceableTypes;
+  private $mParcelableTypes;
   private $mUnsupportedTypes;
   private $mClass;
 
   public function __construct( $input ) {
     // These are the Java types that can easily be written to Parcel
-    $this->mParceableTypes = array(
+    $this->mParcelableTypes = array(
       'boolean' => new BooleanTransformer(),
       'Boolean' => new BooleanTransformer(),
       'byte' => new IntegratedTransformer( 'Byte' ),
@@ -57,7 +57,10 @@ class CodeBuilder {
 
     // Remove single-line comments
     $input = preg_replace( '/\/\/.*/', '', $input );
-    $input = str_replace( array( "\n", "\r", "\t", "  " ), '', $input );
+    $input = preg_replace( '/[\s]{2,}/m', ' ', $input );
+    $input = preg_replace( '/\{[\s]+/',  '{', $input );
+    $input = preg_replace( '/^[ ]+/m', '', $input );
+    $input = str_replace( array( "\n", "\r", "\t" ), '', $input );
     $this->mClass = null;
 
     if ( preg_match( '/class (?<class>[^ ]+)/', $input, $matches ) )
@@ -158,7 +161,7 @@ class CodeBuilder {
   }
 
   public function getSupportLevel( CodeField $field ) {
-    if (isset( $this->mParceableTypes[ $field->getType() ] )) {
+    if (isset( $this->mParcelableTypes[ $field->getType() ] )) {
       return SupportLevel::SpecificTransformer;
     } else if (in_array( $field->getType(), $this->mUnsupportedTypes )) {
       return SupportLevel::Unsupported;
@@ -167,8 +170,8 @@ class CodeBuilder {
     }
   }
 
-  public function isTypeUnconditionallyParceable( $type ) {
-    if (isset( $this->mParceableTypes[ $type ] )) {
+  public function isTypeUnconditionallyParcelable( $type ) {
+    if (isset( $this->mParcelableTypes[ $type ] )) {
       return true;
     } else {
       return false;
@@ -215,7 +218,7 @@ class CodeBuilder {
       if ( in_array( $field->getName(), $selectedFields )) {
         $level = $this->getSupportLevel($field);
         if ($level == SupportLevel::SpecificTransformer) {
-          $transformer = $this->mParceableTypes[$field->getType()];
+          $transformer = $this->mParcelableTypes[$field->getType()];
           $reads[] = $this->padCodeLeft( $transformer->getReadCode( $field ) );
           $writes[] = $this->padCodeLeft( $transformer->getWriteCode( $field ) );
         } else if ($level == SupportLevel::GeneralTransformer) {

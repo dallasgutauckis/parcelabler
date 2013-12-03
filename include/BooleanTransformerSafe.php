@@ -16,32 +16,21 @@
  */
 
 /**
- * Implements a transformation of the given List subclass
+ * Implements a boolean transformation of the given field
  */
-class ListTransformer implements Transformer {
-  private $mTypeSuffix;
-
-  public function __construct( $typeSuffix ) {
-    $this->mTypeSuffix = $typeSuffix;
-  }
-
+class BooleanTransformerSafe implements Transformer {
   public function getWriteCode( CodeField $field ) {
 	$code  = 'if (' . $field->getName() . ' == null) {'. "\n";
-	$code .= '    dest.writeByte((byte) (0x00));' . "\n";
+	$code .= '    dest.writeByte((byte) (0x02));' . "\n";
 	$code .= '} else {' . "\n";
-	$code .= '    dest.writeByte((byte) (0x01));' . "\n";
-	$code .= '    dest.writeList(' . $field->getName() . ');' . "\n";
+	$code .= '    dest.writeByte((byte) (' . $field->getName() . ' ? 0x01 : 0x00));' . "\n";
 	$code .= '}';
     return $code;
   }
 
   public function getReadCode( CodeField $field ) {
-	$code  = 'if (in.readByte() == 0x01) {' . "\n";
-  $code .= '    ' . $field->getName() . ' = new ' . $this->mTypeSuffix . '<' . $field->getTypeParam() . '>' . '();' . "\n";
-  $code .= '    in.readList(' . $field->getName() . ', ' . $field->getTypeParam() . '.class.getClassLoader());' . "\n";
-	$code .= '} else {' . "\n";
-	$code .= '    ' . $field->getName() . ' = null;' . "\n";
-	$code .= '}';
+	$code  = 'byte ' . $field->getName() . 'Val = in.readByte();' . "\n";
+	$code .= $field->getName() . ' = ' . $field->getName() . 'Val == 0x02 ? null : ' . $field->getName() . 'Val != 0x00;';
     return $code;
   }
 }

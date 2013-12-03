@@ -128,11 +128,11 @@ if ($file && $codeBuilder->getClass()) {
 
   foreach ( $fields as $field ) {
     if ( $codeBuilder->getSupportLevel( $field ) != SupportLevel::Unsupported ){
-      if ( $codeBuilder->isTypeUnconditionallyParceable($field->getType()) === false ) {
+      if ( $codeBuilder->isTypeUnconditionallyParcelable($field->getType()) === false ) {
         array_push( $suspiciousTypes, $field->getType() );
       } 
       $typeParam = $field->getTypeParam();
-      if ( !empty($typeParam) && $codeBuilder->isTypeUnconditionallyParceable($typeParam) === false ) {
+      if ( !empty($typeParam) && $codeBuilder->isTypeUnconditionallyParcelable($typeParam) === false ) {
         array_push( $suspiciousTypes, htmlentities($typeParam) );
       }
     }

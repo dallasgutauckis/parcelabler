@@ -56,7 +56,7 @@ $postedFields = isset( $_POST['fields'] ) ? explode( ',', $_POST['fields'] ) : a
     <h1>parcelabler</h1>
     <em>by <a href="http://dallasgutauckis.com">Dallas Gutauckis</a></em>
     <h6>for Android Parcelable implementations</h6>
-    <h5>[NEW]: Also check out <a href="https://github.com/dallasgutauckis/android-parcelable-intellij-plugin">this convenient IntelliJ/Android Studio plugin...</a></h5>
+    <h5>[NEW]: Also check out <a href="http://dallasgutauckis.com/2014/02/10/a-better-parcelabler/">this convenient IntelliJ/Android Studio plugin...</a></h5>
 
     <form method="POST">
       <fieldset>

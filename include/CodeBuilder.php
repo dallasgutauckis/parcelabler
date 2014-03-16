@@ -65,7 +65,7 @@ class CodeBuilder {
     $input = str_replace( array( "\n", "\r", "\t" ), '', $input );
     $this->mClass = null;
 
-    if ( preg_match( '/class (?<class>[^ ]+)/', $input, $matches ) )
+    if ( preg_match( '/class (?<class>([a-zA-Z_$][a-zA-Z\d_$]*\.)*[a-zA-Z_$][a-zA-Z\d_$]*)/', $input, $matches ) )
     {
       $this->mClass = $matches['class'];
     }

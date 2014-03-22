@@ -1,0 +1,12 @@
+application: parcelabler 
+version: 2
+runtime: php
+api_version: 1
+
+handlers:
+- url: /stylesheets
+  static_dir: stylesheets
+- url: /javascripts
+  static_dir: javascripts
+- url: /.*
+  script: index.php

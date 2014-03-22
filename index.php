@@ -33,6 +33,8 @@ function __autoload( $class ) {
   }
 }
 
+spl_autoload_register('__autoload');
+
 $file = '';
 if ( isset( $_POST['file'] ) )
 {

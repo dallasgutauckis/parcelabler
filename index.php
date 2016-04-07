@@ -58,7 +58,18 @@ $postedFields = isset( $_POST['fields'] ) ? explode( ',', $_POST['fields'] ) : a
     <h1>parcelabler</h1>
     <em>by <a href="http://dallasgutauckis.com">Dallas Gutauckis</a></em>
     <h6>for Android Parcelable implementations</h6>
-    <h5>[NEW]: Also check out <a href="http://dallasgutauckis.com/2014/02/10/a-better-parcelabler/">this convenient IntelliJ/Android Studio plugin...</a></h5>
+    <!--<h5>Love Android? We're hiring! Hit me up for more info: <a href="mailto:dallas@seatgeek.com">dallas@seatgeek.com</a></h5>-->
+    <!--h5>[NEW]: Also check out <a href="http://dallasgutauckis.com/2014/02/10/a-better-parcelabler/">this convenient IntelliJ/Android Studio plugin...</a></h5-->
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- parcelabler.com — header -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:728px;height:90px"
+         data-ad-client="ca-pub-7874761747975813"
+         data-ad-slot="4561417088"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 
     <form method="POST">
       <fieldset>
@@ -179,17 +190,14 @@ if ( isset( $_POST['submit'] ) && ! $codeBuilder->getClass() ) {
 ?>
   </div>
   </div>
-  <script type="text/javascript">
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-   var _gaq = _gaq || [];
-   _gaq.push(['_setAccount', 'UA-401905-5']);
-   _gaq.push(['_trackPageview']);
-
-   (function() {
-     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-   })();
+    ga('create', 'UA-401905-7', 'parcelabler.com');
+    ga('send', 'pageview');
 
   </script>
 </body>
